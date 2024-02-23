@@ -3,7 +3,6 @@ import { useMutation } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
-import styled from "styled-components";
 
 
 
@@ -42,86 +41,55 @@ const Login = (props) => {
     });
   };
 
-  const Container = styled.div`
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-`;
+  return (
+    <main className="flex-row justify-center mb-4">
+      <div className="col-12 col-lg-10">
+        <div className="card">
+          <h4 className="card-header bg-dark text-light p-2">Login</h4>
+          <div className="card-body">
+            {data ? (
+              <p>
+                Success! You may now head{' '}
+                <Link to="/">back to the homepage.</Link>
+              </p>
+            ) : (
+              <form onSubmit={handleFormSubmit}>
+                <input
+                  className="form-input"
+                  placeholder="Your email"
+                  name="email"
+                  type="email"
+                  value={formState.email}
+                  onChange={handleChange}
+                />
+                <input
+                  className="form-input"
+                  placeholder="******"
+                  name="password"
+                  type="password"
+                  value={formState.password}
+                  onChange={handleChange}
+                />
+                <button
+                  className="btn btn-block btn-primary"
+                  style={{ cursor: 'pointer' }}
+                  type="submit"
+                >
+                  Submit
+                </button>
+              </form>
+            )}
 
-const Title = styled.h2`
-  margin-bottom: 20px;
-  text-align: center;
-`;
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const Input = styled.input`
-  padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-const ErrorMessage = styled.p`
-  margin-top: 10px;
-  color: red;
-  text-align: center;
-`;
-
-const StyledLink = styled(Link)`
-  display: block;
-  text-align: center;
-  margin-top: 20px;
-  color: #007bff;
-  text-decoration: none;
-  font-size: 16px;
-`;
-
-return (
-  <Container>
-  <Title>Login</Title>
-  <Form onSubmit={handleFormSubmit}>
-    <Input
-      placeholder="Email address"
-      name="email"
-      type="email"
-      value={formState.email}
-      onChange={handleChange}
-    />
-    <Input
-      placeholder="Password"
-      name="password"
-      type="password"
-      value={formState.password}
-      onChange={handleChange}
-    />
-    {error && <ErrorMessage>The provided credentials are incorrect</ErrorMessage>}
-    <Button type="submit">Submit</Button>
-  </Form>
-  <StyledLink to="/signup">Don't have an account? Sign up</StyledLink>
-</Container>
-);
-}
+            {error && (
+              <div className="my-3 p-3 bg-danger text-white">
+                {error.message}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+};
 
 export default Login;
