@@ -1,70 +1,53 @@
-import { useEffect } from 'react';
-// import BookItem from '../BookItem';
-import { useStoreContext } from '../../utils/GlobalState';
-import { UPDATE_BOOKS } from '../../utils/actions';
-import { useQuery } from '@apollo/client';
-import { QUERY_BOOKS } from '../../utils/queries';
-import { idbPromise } from '../../utils/helpers';
-import spinner from '../../assets/spinner.gif';
+import { Link } from 'react-router-dom';
 
-function BookList() {
-  const [state, dispatch] = useStoreContext();
-
-  const { currentCategory } = state;
-
-  const { loading, data } = useQuery(QUERY_BOOKS);
-
-  useEffect(() => {
-    if (data) {
-      dispatch({
-        type: UPDATE_BOOKS,
-        books: data.books,
-      });
-      data.books.forEach((book) => {
-        idbPromise('books', 'put', book);
-      });
-    } else if (!loading) {
-      idbPromise('books', 'get').then((books) => {
-        dispatch({
-          type: UPDATE_BOOKS,
-          books: books,
-        });
-      });
-    }
-  }, [data, loading, dispatch]);
-
-  function filterBooks() {
-    if (!currentCategory) {
-      return state.books;
-    }
-
-    return state.books.filter(
-      (book) => book.category._id === currentCategory
-    );
+const BookList = ({
+  books,
+  title,
+  showTitle = true,
+  showUsername = true,
+}) => {
+  if (!books.length) {
+    return <h3>No Books Yet</h3>;
   }
 
-  // return (
-  //   <div className="my-2">
-  //     <h2>Our Books:</h2>
-  //     {state.books.length ? (
-  //       <div className="flex-row">
-  //         {filterBooks().map((book) => (
-  //           <BookItem
-  //             key={book._id}
-  //             _id={book._id}
-  //             image={book.image}
-  //             name={book.name}
-  //             price={book.price}
-  //             quantity={book.quantity}
-  //           />
-  //         ))}
-  //       </div>
-  //     ) : (
-  //       <h3>You haven't added any books yet!</h3>
-  //     )}
-  //     {loading ? <img src={spinner} alt="loading" /> : null}
-  //   </div>
-  // );
-}
+  return (
+    <div>
+      {showTitle && <h3>{title}</h3>}
+      {books &&
+        books.map((book) => (
+          <div key={book._id} className="card mb-3">
+            <h4 className="card-header bg-primary text-light p-2 m-0">
+              {showUsername ? (
+                <Link
+                  className="text-light"
+                  to={`/profiles/${book.bookAuthor}`}
+                >
+                  {book.bookAuthor} <br />
+                  <span style={{ fontSize: '1rem' }}>
+                    had this book on {book.createdAt}
+                  </span>
+                </Link>
+              ) : (
+                <>
+                  <span style={{ fontSize: '1rem' }}>
+                    You had this book on {book.createdAt}
+                  </span>
+                </>
+              )}
+            </h4>
+            <div className="card-body bg-light p-2">
+              <p>{book.bookText}</p>
+            </div>
+            <Link
+              className="btn btn-primary btn-block btn-squared"
+              to={`/books/${book._id}`}
+            >
+              Join the discussion on this book.
+            </Link>
+          </div>
+        ))}
+    </div>
+  );
+};
 
 export default BookList;

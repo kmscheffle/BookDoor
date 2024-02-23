@@ -1,64 +1,47 @@
 const typeDefs = `
-  type Category {
+  type User {
     _id: ID
-    name: String
+    username: String
+    email: String
+    password: String
+    books: [Book]!
   }
 
   type Book {
     _id: ID
-    name: String
-    description: String
-    image: String
-    quantity: Int
-    price: Float
-    category: Category
+    bookText: String
+    bookAuthor: String
+    createdAt: String
+    comments: [Comment]!
   }
 
-  type Order {
+  type Comment {
     _id: ID
-    purchaseDate: String
-    books: [Book]
+    commentText: String
+    commentAuthor: String
+    createdAt: String
   }
-
-  type User {
-    _id: ID
-    firstName: String
-    lastName: String
-    email: String
-    orders: [Order]
-  }
-
-
 
   type Auth {
-    token: ID
+    token: ID!
     user: User
-  }
-
-  input BookInput {
-    _id: ID
-    purchaseQuantity: Int
-    name: String
-    image: String
-    price: Float
-    quantity: Int
   }
 
   type Query {
-    categories: [Category]
-    books(category: ID, name: String): [Book]
-    book(_id: ID!): Book
-    user: User
-    order(_id: ID!): Order
-    checkout(books: [BookInput]): Checkout
+    users: [User]
+    user(username: String!): User
+    books(username: String): [Book]
+    book(bookId: ID!): Book
+    me: User
   }
 
   type Mutation {
-    addUser(firstName: String!, lastName: String!, email: String!, password: String!): Auth
-    addBook(books: [ID]!): Book
-    updateUser(firstName: String, lastName: String, email: String, password: String): User
-    updateBook(_id: ID!, quantity: Int!): Book
+    addUser(username: String!, email: String!, password: String!): Auth
     login(email: String!, password: String!): Auth
+    addBook(bookText: String!): Book
+    addComment(bookId: ID!, commentText: String!): Book
+    removeBook(bookId: ID!): Book
+    removeComment(bookId: ID!, commentId: ID!): Book
   }
 `;
 
