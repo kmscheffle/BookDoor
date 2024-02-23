@@ -7,7 +7,7 @@ const { authMiddleware } = require('./utils/auth');
 const { typeDefs, resolvers } = require('./schemas');
 const db = require('./config/connection');
 
-const PORT = process.env.PORT || 5000; // You can change the port number if needed
+const PORT = process.env.PORT || 3001; // You can change the port number if needed
 const app = express();
 const server = new ApolloServer({
   typeDefs,
@@ -32,9 +32,10 @@ if (process.env.NODE_ENV === 'production') {
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
-app.get('/', (req, res) => {
-  res.send('Hello World!'); // Example route
-});
+
+// app.get('/', (req, res) => {
+//   res.send('Hello World!'); // Example route
+// });
 }
 
 // Start server
@@ -47,4 +48,4 @@ db.once('open', () => {
 };
 
 // Call the async function to start the server
-// startApolloServer();
+startApolloServer();

@@ -1,84 +1,34 @@
-const { User, Book, Category, Order } = require('../models');
+const { User, Book } = require('../models');
 const { signToken, AuthenticationError } = require('../utils/auth');
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 const resolvers = {
   Query: {
-    categories: async () => {
-      return await Category.find();
+    users: async () => {
+      return User.find().populate('books');
     },
-    books: async (parent, { category, name }) => {
-      const params = {};
-
-      if (category) {
-        params.category = category;
-      }
-
-      if (name) {
-        params.name = {
-          $regex: name
-        };
-      }
-
-      return await Book.find(params).populate('category');
+    user: async (parent, { username }) => {
+      return User.findOne({ username }).populate('books');
     },
-    book: async (parent, { _id }) => {
-      return await Book.findById(_id).populate('category');
+    books: async (parent, { username }) => {
+      const params = username ? { username } : {};
+      return Book.find(params).sort({ createdAt: -1 });
     },
-    user: async (parent, args, context) => {
+    book: async (parent, { bookId }) => {
+      return Book.findOne({ _id: bookId });
+    },
+    me: async (parent, args, context) => {
       if (context.user) {
-        const user = await User.findById(context.user._id).populate({
-          path: 'orders.books',
-          populate: 'category'
-        });
-
-        return user;
+        return User.findOne({ _id: context.user._id }).populate('books');
       }
-
       throw AuthenticationError;
     },
-    order: async (parent, { _id }, context) => {
-      if (context.user) {
-        const user = await User.findById(context.user._id).populate({
-          path: 'orders.books',
-          populate: 'category'
-        });
-
-        return user.orders.id(_id);
-      }
-
-      throw AuthenticationError;
-    }
   },
+
   Mutation: {
-    addUser: async (parent, args) => {
-      const user = await User.create(args);
+    addUser: async (parent, { username, email, password }) => {
+      const user = await User.create({ username, email, password });
       const token = signToken(user);
-
       return { token, user };
-    },
-    addBook: async (parent, { books }, context) => {
-      if (context.user) {
-        const order = new Order({ books });
-
-        await User.findByIdAndUpdate(context.user._id, { $push: { orders: order } });
-
-        return order;
-      }
-
-      throw AuthenticationError;
-    },
-    updateUser: async (parent, args, context) => {
-      if (context.user) {
-        return await User.findByIdAndUpdate(context.user._id, args, { new: true });
-      }
-
-      throw AuthenticationError;
-    },
-    updateBook: async (parent, { _id, quantity }) => {
-      const decrement = Math.abs(quantity) * -1;
-
-      return await Book.findByIdAndUpdate(_id, { $inc: { quantity: decrement } }, { new: true });
     },
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
@@ -96,8 +46,74 @@ const resolvers = {
       const token = signToken(user);
 
       return { token, user };
-    }
-  }
+    },
+    addBook: async (parent, { bookText }, context) => {
+      if (context.user) {
+        const book = await Book.create({
+          bookText,
+          bookAuthor: context.user.username,
+        });
+
+        await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $addToSet: { books: book._id } }
+        );
+
+        return book;
+      }
+      throw AuthenticationError;
+    },
+    addComment: async (parent, { bookId, commentText }, context) => {
+      if (context.user) {
+        return Book.findOneAndUpdate(
+          { _id: bookId },
+          {
+            $addToSet: {
+              comments: { commentText, commentAuthor: context.user.username },
+            },
+          },
+          {
+            new: true,
+            runValidators: true,
+          }
+        );
+      }
+      throw AuthenticationError;
+    },
+    removeBook: async (parent, { bookId }, context) => {
+      if (context.user) {
+        const book = await Book.findOneAndDelete({
+          _id: bookId,
+          bookAuthor: context.user.username,
+        });
+
+        await User.findOneAndUpdate(
+          { _id: context.user._id },
+          { $pull: { books: book._id } }
+        );
+
+        return book;
+      }
+      throw AuthenticationError;
+    },
+    removeComment: async (parent, { bookId, commentId }, context) => {
+      if (context.user) {
+        return Book.findOneAndUpdate(
+          { _id: bookId },
+          {
+            $pull: {
+              comments: {
+                _id: commentId,
+                commentAuthor: context.user.username,
+              },
+            },
+          },
+          { new: true }
+        );
+      }
+      throw AuthenticationError;
+    },
+  },
 };
 
 module.exports = resolvers;

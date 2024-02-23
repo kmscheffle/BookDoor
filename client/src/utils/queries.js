@@ -1,69 +1,59 @@
 import { gql } from '@apollo/client';
 
-export const QUERY_BOOKS = gql`
-  query getBooks($category: ID) {
-    books(category: $category) {
+export const QUERY_USER = gql`
+  query user($username: String!) {
+    user(username: $username) {
       _id
-      name
-      description
-      price
-      quantity
-      image
-      category {
+      username
+      email
+      books {
         _id
+        bookText
+        createdAt
       }
     }
   }
 `;
 
-export const QUERY_CHECKOUT = gql`
-  query getCheckout($books: [BookInput]) {
-    checkout(books: $books) {
-      session
-    }
-  }
-`;
-
-export const QUERY_ALL_BOOKS = gql`
-  {
+export const QUERY_BOOKS = gql`
+  query getBooks {
     books {
       _id
-      name
-      description
-      price
-      quantity
-      category {
-        name
+      bookText
+      bookAuthor
+      createdAt
+    }
+  }
+`;
+
+export const QUERY_SINGLE_BOOK = gql`
+  query getSingleBook($bookId: ID!) {
+    book(bookId: $bookId) {
+      _id
+      bookText
+      bookAuthor
+      createdAt
+      comments {
+        _id
+        commentText
+        commentAuthor
+        createdAt
       }
     }
   }
 `;
 
-export const QUERY_CATEGORIES = gql`
-  {
-    categories {
+export const QUERY_ME = gql`
+  query me {
+    me {
       _id
-      name
-    }
-  }
-`;
-
-export const QUERY_USER = gql`
-  {
-    user {
-      firstName
-      lastName
-      orders {
+      username
+      email
+      books {
         _id
-        purchaseDate
-        books {
-          _id
-          name
-          description
-          price
-          quantity
-          image
-        }
+        bookText
+        bookAuthor
+        createdAt
       }
     }
   }
