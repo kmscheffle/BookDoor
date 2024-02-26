@@ -1,3 +1,4 @@
+//This component is featured when the user clicks on the profile where they can see their books
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
@@ -41,7 +42,7 @@ const CommentForm = ({ bookId }) => {
 
   return (
     <div>
-      <h4>What are your thoughts on this book?</h4>
+      <h4>What book would you like to trade?</h4>
 
       {Auth.loggedIn() ? (
         <>
@@ -60,7 +61,7 @@ const CommentForm = ({ bookId }) => {
             <div className="col-12 col-lg-9">
               <textarea
                 name="commentText"
-                placeholder="Add your comment..."
+                placeholder="Add your book..."
                 value={commentText}
                 className="form-input w-100"
                 style={{ lineHeight: '1.5', resize: 'vertical' }}
@@ -70,7 +71,7 @@ const CommentForm = ({ bookId }) => {
 
             <div className="col-12 col-lg-3">
               <button className="btn btn-primary btn-block py-3" type="submit">
-                Add Comment
+                Add Book
               </button>
             </div>
           </form>

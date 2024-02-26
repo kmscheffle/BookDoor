@@ -1,3 +1,4 @@
+//This component is featured on the home page after the user has added their book
 import { Link } from 'react-router-dom';
 
 const BookList = ({
