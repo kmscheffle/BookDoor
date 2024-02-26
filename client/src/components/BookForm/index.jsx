@@ -1,3 +1,5 @@
+//This component is featured when the user is creating a new book to trade
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
@@ -97,4 +99,4 @@ const BookForm = () => {
   );
 };
 
-export default ThoughtForm;
+export default BookForm;
