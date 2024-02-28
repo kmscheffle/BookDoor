@@ -1,27 +1,71 @@
 //This component is featured when the user is creating a new book to trade
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import styled from "styled-components";
 
-import { ADD_BOOK } from '../../utils/mutations';
-import { QUERY_BOOKS, QUERY_ME } from '../../utils/queries';
+import { ADD_BOOK } from "../../utils/mutations";
+import { QUERY_BOOKS, QUERY_ME } from "../../utils/queries";
 
-import Auth from '../../utils/auth';
+import Auth from "../../utils/auth";
+
+const StyledFormContainer = styled.div`
+  margin-top: 2rem;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #ccc;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  padding: 1.5rem;
+`;
+
+const StyledHeader = styled.h3`
+  background-color: #343a40;
+  color: #fff;
+  padding: 1rem;
+  margin: 0;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+`;
+
+const StyledTextarea = styled.textarea`
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  line-height: 1.5;
+  resize: vertical;
+`;
+
+const StyledButton = styled.button`
+  padding: 1rem;
+  background-color: #1b89bc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #126e8f;
+  }
+`;
+
+const StyledError = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #dc3545;
+  color: #fff;
+`;
 
 const BookForm = () => {
-  const [bookText, setBookText] = useState('');
+  const [bookText, setBookText] = useState("");
 
   const [characterCount, setCharacterCount] = useState(0);
 
-  const [addBook, { error }] = useMutation
-  (ADD_BOOK, {
-    refetchQueries: [
-      QUERY_BOOKS,
-      'getBooks',
-      QUERY_ME,
-      'me'
-    ]
+  const [addBook, { error }] = useMutation(ADD_BOOK, {
+    refetchQueries: [QUERY_BOOKS, "getBooks", QUERY_ME, "me"],
   });
 
   const handleFormSubmit = async (event) => {
@@ -30,11 +74,11 @@ const BookForm = () => {
       const { data } = await addBook({
         variables: {
           bookText,
-          bookAuthor: Auth.getProfile().authenticatedPerson.username// TODO: Display the user's username
+          bookAuthor: Auth.getProfile().authenticatedPerson.username, // TODO: Display the user's username
         },
       });
 
-      setBookText('');
+      setBookText("");
     } catch (err) {
       console.error(err);
     }
@@ -43,59 +87,41 @@ const BookForm = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    if (name === 'bookText' && value.length <= 280) {
+    if (name === "bookText" && value.length <= 280) {
       setBookText(value);
       setCharacterCount(value.length);
     }
   };
 
   return (
-    <div>
-      <h3>What's on your techy mind?</h3>
-
+    <StyledFormContainer>
+      <StyledHeader>Add Book</StyledHeader>
       {Auth.loggedIn() ? (
-        <>
+        <StyledForm onSubmit={handleFormSubmit}>
           <p
             className={`m-0 ${
-              characterCount === 280 || error ? 'text-danger' : ''
+              characterCount === 280 || error ? "text-danger" : ""
             }`}
           >
             Character Count: {characterCount}/280
           </p>
-          <form
-            className="flex-row justify-center justify-space-between-md align-center"
-            onSubmit={handleFormSubmit}
-          >
-            <div className="col-12 col-lg-9">
-              <textarea
-                name="bookText"
-                placeholder="Here's a new book..."
-                value={bookText}
-                className="form-input w-100"
-                style={{ lineHeight: '1.5', resize: 'vertical' }}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-
-            <div className="col-12 col-lg-3">
-              <button className="btn btn-primary btn-block py-3" type="submit">
-                Add Book
-              </button>
-            </div>
-            {error && (
-              <div className="col-12 my-3 bg-danger text-white p-3">
-                {error.message}
-              </div>
-            )}
-          </form>
-        </>
+          <StyledTextarea
+            name="bookText"
+            placeholder="Here's a new book..."
+            value={bookText}
+            className="form-input w-100"
+            onChange={handleChange}
+          ></StyledTextarea>
+          <StyledButton type="submit">Add Book</StyledButton>
+          {error && <StyledError>{error.message}</StyledError>}
+        </StyledForm>
       ) : (
         <p>
-          You need to be logged in to share your books. Please{' '}
-          <Link to="/login">login</Link> or <Link to="/signup">signup.</Link>
+          You need to be logged in to share your books. Please{" "}
+          <Link to="/login">login</Link> or <Link to="/signup">signup</Link>.
         </p>
       )}
-    </div>
+    </StyledFormContainer>
   );
 };
 
