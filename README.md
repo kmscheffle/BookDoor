@@ -16,6 +16,6 @@ Bookdoor is a web application where users can post books they want to trade with
 
 ## Screenshot
 
-![Screenshot](https://drive.google.com/file/d/1Rj922BEeSpq3Bejdg-OBHWFT7rVFR07H/view?usp=sharing)
+![Screenshot](image.png)
 
 ##Deployment
