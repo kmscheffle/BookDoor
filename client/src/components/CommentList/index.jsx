@@ -1,4 +1,4 @@
-//This component is featured after the user clicks on someones book. The user is given the feature to comment on it
+//This component is featured after the user clicks on someones book. All of the other comments will appear here.
 const CommentList = ({ comments = [] }) => {
   if (!comments.length) {
     return <h3>No Comments Yet</h3>;
