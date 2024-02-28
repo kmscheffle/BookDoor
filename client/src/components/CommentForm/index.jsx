@@ -3,9 +3,58 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import React, { useState } from 'react';
 import { ADD_COMMENT } from '../../utils/mutations';
-
+import styled from 'styled-components'
 import Auth from '../../utils/auth';
 import { useEffect } from 'react';
+
+const StyledContainer = styled.div`
+  margin-top: 2rem;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #ccc;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  padding: 1.5rem;
+`;
+
+const StyledHeader = styled.h4`
+  background-color: #343a40;
+  color: #fff;
+  padding: 1rem;
+  margin: 0;
+  border-top-left-radius: 0.5rem; 
+  border-top-right-radius: 0.5rem;
+`;
+
+const StyledTextarea = styled.textarea`
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  line-height: 1.5;
+  resize: vertical;
+`;
+
+const StyledButton = styled.button`
+  padding: 1rem;
+  background-color: #1b89bc;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-bottom-left-radius: 0.5rem; 
+  border-bottom-right-radius: 0.5rem;
+
+  &:hover {
+    background-color: #126e8f;
+  }
+`;
+
+const StyledError = styled.span`
+  color: #dc3545;
+`;
+
 
 const CommentForm = ({ bookId }) => {
   const [commentText, setCommentText] = useState('');
@@ -47,49 +96,31 @@ const variableData = {bookId,
   };
 
   return (
-    <div>
-      <h4>What book would you like to trade?</h4>
-
-      {Auth.loggedIn() ? (
-        <>
-          <p
-            className={`m-0 ${
-              characterCount === 280 || error ? 'text-danger' : ''
-            }`}
-          >
-            Character Count: {characterCount}/280
-            {error && <span className="ml-2">{error.message}</span>}
-          </p>
-          <form
-            className="flex-row justify-center justify-space-between-md align-center"
-            onSubmit={handleFormSubmit}
-          >
-            <div className="col-12 col-lg-9">
-              <textarea
-                name="commentText"
-                placeholder="Add your book..."
-                value={commentText}
-                className="form-input w-100"
-                style={{ lineHeight: '1.5', resize: 'vertical' }}
-                onChange={handleChange}
-              ></textarea>
-            </div>
-
-            <div className="col-12 col-lg-3">
-              <button className="btn btn-primary btn-block py-3" type="submit">
-                Add Book
-              </button>
-            </div>
-          </form>
-        </>
-      ) : (
-        <p>
-          You need to be logged in to share your books. Please{' '}
-          <Link to="/login">login</Link> or <Link to="/signup">signup.</Link>
+    <StyledContainer>
+    <StyledHeader>Add a Comment</StyledHeader>
+    {Auth.loggedIn() ? (
+      <StyledForm onSubmit={handleFormSubmit}>
+        <p className={`m-0 ${characterCount === 280 || error ? 'text-danger' : ''}`}>
+          Character Count: {characterCount}/280
+          {error && <StyledError className="ml-2">{error.message}</StyledError>}
         </p>
-      )}
-    </div>
-  );
+        <StyledTextarea
+          name="commentText"
+          placeholder="Write your comment here..."
+          value={commentText}
+          className="form-input w-100"
+          onChange={handleChange}
+        ></StyledTextarea>
+        <StyledButton type="submit">Submit Comment</StyledButton>
+      </StyledForm>
+    ) : (
+      <p>
+        You need to be logged in to share your books. Please{' '}
+        <Link to="/login">login</Link> or <Link to="/signup">signup.</Link>
+      </p>
+    )}
+  </StyledContainer>
+);
 };
 
 export default CommentForm;
