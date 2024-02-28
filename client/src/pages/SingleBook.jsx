@@ -1,19 +1,36 @@
-// Import the `useParams()` hook
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
+import styled from 'styled-components';
 
-import CommentList from '../components/BookList';
+import CommentList from '../components/CommentList';
 import CommentForm from '../components/CommentForm';
 
 import { QUERY_SINGLE_BOOK } from '../utils/queries';
 
-const SingleBook = () => {
-  // Use `useParams()` to retrieve value of the route parameter `:profileId`
-  const { bookId } = useParams();
+const StyledContainer = styled.div`
+  margin-top: 2rem;
+`;
 
+const StyledHeader = styled.h3`
+  background-color: #343a40;
+  color: #fff;
+  padding: 1rem 2rem;
+  margin: 0;
+`;
+
+const StyledQuote = styled.blockquote`
+  font-size: 1.5rem;
+  font-style: italic;
+  border: 2px solid #1a1a1a;
+  padding: 1rem;
+  margin-bottom: 2rem;
+`;
+
+const SingleBook = () => {
+  const { bookId } = useParams();
   const { loading, data } = useQuery(QUERY_SINGLE_BOOK, {
-    // pass URL parameter
-    variables: { bookId: bookId },
+    variables: { bookId },
   });
 
   const book = data?.book || {};
@@ -21,35 +38,23 @@ const SingleBook = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  return (
-    <div className="my-3">
-      <h3 className="card-header bg-dark text-light p-2 m-0">
-        {book.bookAuthor} <br />
-        <span style={{ fontSize: '1rem' }}>
-          had this book on {book.createdAt}
-        </span>
-      </h3>
-      <div className="bg-light py-4">
-        <blockquote
-          className="p-4"
-          style={{
-            fontSize: '1.5rem',
-            fontStyle: 'italic',
-            border: '2px dotted #1a1a1a',
-            lineHeight: '1.5',
-          }}
-        >
-          {book.bookText}
-        </blockquote>
-      </div>
 
+  return (
+    <StyledContainer>
+      <StyledHeader>
+        {book.bookAuthor} <br />
+        <span style={{ fontSize: '1rem' }}>had this book on {book.createdAt}</span>
+      </StyledHeader>
+      <div className="bg-light py-4">
+        <StyledQuote>{book.bookText}</StyledQuote>
+      </div>
       <div className="my-5">
         <CommentList comments={book.comments} />
       </div>
-      <div className="m-3 p-4" style={{ border: '1px dotted #1a1a1a' }}>
+      <div className="m-3 p-4">
         <CommentForm bookId={book._id} />
       </div>
-    </div>
+    </StyledContainer>
   );
 };
 

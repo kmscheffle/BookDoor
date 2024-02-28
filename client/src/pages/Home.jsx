@@ -23,7 +23,7 @@ const Home = () => {
           ) : (
             <BookList
               books={books}
-              title="Some Feed for Book(s)..."
+              title="Books"
             />
           )}
         </div>
