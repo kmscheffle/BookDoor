@@ -71,7 +71,7 @@ const Header = () => {
       <ButtonContainer>
         {Auth.loggedIn() ? (
           <>
-            <Button to="/me" primary>
+            <Button to="/me" primary={true.toString()}>
               {Auth.getProfile().authenticatedPerson.username + "'s profile"}
             </Button>
             <button className="btn btn-lg btn-light m-2" onClick={logout}>
@@ -81,7 +81,7 @@ const Header = () => {
         ) : (
           <>
             <Button to="/login">Login</Button>
-            <Button to="/signup" primary>
+            <Button to="/signup" primary={true.toString()}>
               Signup
             </Button>
           </>
