@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 
 import BookList from '../components/BookList';
-import BookForm from '../components/CommentForm';
+import BookForm from '../components/BookForm';
 
 import { QUERY_BOOKS } from '../utils/queries';
 

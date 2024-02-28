@@ -1,4 +1,4 @@
-//This component is featured on the home page after the user has added their book
+//This component is featured on the home page. This is displaying everyones post and the date they were posted.
 import { Link } from 'react-router-dom';
 
 const BookList = ({
@@ -7,9 +7,10 @@ const BookList = ({
   showTitle = true,
   showUsername = true,
 }) => {
-  if (!books.length) {
+  if (!books) {
     return <h3>No Books Yet</h3>;
   }
+    // console.log('bookLength',books.length)
 
   return (
     <div>

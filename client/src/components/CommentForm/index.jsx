@@ -1,11 +1,11 @@
-//This component is featured when the user clicks on the profile where they can see their books
-import { useState } from 'react';
+//This component is featured after the user clicks on someones book. The user is given the feature to comment on it.import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-
+import React, { useState } from 'react';
 import { ADD_COMMENT } from '../../utils/mutations';
 
 import Auth from '../../utils/auth';
+import { useEffect } from 'react';
 
 const CommentForm = ({ bookId }) => {
   const [commentText, setCommentText] = useState('');
@@ -15,13 +15,19 @@ const CommentForm = ({ bookId }) => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
+const variableData = {bookId,
+          commentText,
+          commentAuthor: Auth.getProfile().authenticatedPerson.username 
+        }
+        console.log("variable data", variableData)
 
+          
     try {
       const { data } = await addComment({
         variables: {
           bookId,
           commentText,
-          commentAuthor: Auth.getProfile().authenticatedPerson.username // TODO: Display the user's username
+          commentAuthor: Auth.getProfile().authenticatedPerson.username // Display the user's username
         },
       });
 
