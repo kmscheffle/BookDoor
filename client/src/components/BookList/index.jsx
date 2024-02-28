@@ -1,7 +1,7 @@
 //This component is featured on the home page. This is displaying everyones post and the date they were posted.
-import React from 'react';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components'
+import React from "react";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
 const StyledBookList = styled.div`
   margin-top: 2rem;
@@ -49,46 +49,41 @@ const StyledButton = styled(Link)`
     background-color: #007299;
 `;
 
-const BookList = ({
-  books,
-  title,
-  showTitle = true,
-  showUsername = true,
-}) => {
+const BookList = ({ books, title, showTitle = true, showUsername = true }) => {
   if (!books) {
     return <h3>No Books Yet</h3>;
   }
-    // console.log('bookLength',books.length)
+  // console.log('bookLength',books.length)
 
   return (
     <StyledBookList>
-    {showTitle && <h3>{title}</h3>}
-    {books.map((book) => (
-      <StyledCard key={book._id}>
-        <StyledCardHeader>
-          {showUsername ? (
-            <StyledLink to={`/profiles/${book.bookAuthor}`}>
-              {book.bookAuthor} <br />
-              <span style={{ fontSize: '0.8rem' }}>
-                had this book on {book.createdAt}
+      {showTitle && <h3>{title}</h3>}
+      {books.map((book) => (
+        <StyledCard key={book._id}>
+          <StyledCardHeader>
+            {showUsername ? (
+              <StyledLink to={`/profiles/${book.bookAuthor}`}>
+                {book.bookAuthor} <br />
+                <span style={{ fontSize: "0.8rem" }}>
+                  had this book on {book.createdAt}
+                </span>
+              </StyledLink>
+            ) : (
+              <span style={{ fontSize: "0.8rem" }}>
+                You had this book on {book.createdAt}
               </span>
-            </StyledLink>
-          ) : (
-            <span style={{ fontSize: '0.8rem' }}>
-              You had this book on {book.createdAt}
-            </span>
-          )}
-        </StyledCardHeader>
-        <StyledCardBody>
-          <p>{book.bookText}</p>
-        </StyledCardBody>
-        <StyledButton to={`/books/${book._id}`}>
-          Join the discussion on this book.
-        </StyledButton>
-      </StyledCard>
-    ))}
-  </StyledBookList>
-);
+            )}
+          </StyledCardHeader>
+          <StyledCardBody>
+            <p>{book.bookText}</p>
+          </StyledCardBody>
+          <StyledButton to={`/books/${book._id}`}>
+            Join the discussion on this book.
+          </StyledButton>
+        </StyledCard>
+      ))}
+    </StyledBookList>
+  );
 };
 
 export default BookList;
